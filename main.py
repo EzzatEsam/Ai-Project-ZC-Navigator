@@ -1,8 +1,12 @@
-from gui import *
+from Solvers import *
+from gui_pgame import *
+from Solvers import *
+from map_problem import *
+
 
 def main ():
     print('hi there')
-    wnd = gui_window()
+    wnd = py_game_window()
 
 
 

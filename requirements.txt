@@ -1,0 +1,10 @@
+numpy
+matplotlib
+PIL
+typing
+PyQt5
+sys
+pygame
+multiprocessing
+tracemalloc
+turtle

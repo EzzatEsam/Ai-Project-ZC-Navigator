@@ -52,7 +52,7 @@ class gui_handler :
         self.label3.place(x=LABEL3_POS[0] ,y=LABEL3_POS[1])
 
 
-        options = ['BFS' , 'DFS' , 'DLS' , 'A*']
+        options = ['BFS' , 'DFS' , 'IDS' , 'A*' , 'Greedy']
         alg_choice = StringVar(root)
         alg_choice.set('BFS')
         
@@ -61,6 +61,7 @@ class gui_handler :
         self.drop_down.place(x= DROP_DOWN_X ,y= DROP_DOWN_Y)
         
         self.window = window
+        self.alf_choice = alg_choice
         root.mainloop()
 
 
@@ -91,7 +92,7 @@ class gui_handler :
                 #pygame.draw.line(self.screen, BLUE, ln[0],ln[1], 5)
 
     def get_path(self) :
-        res = self.gen.create_problem(self.current ,self.target)
+        res = self.gen.create_problem(self.current ,self.target ,self.alf_choice.get())
         if res :
             self.current_path = res[0]
             self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]}') 

@@ -1,7 +1,7 @@
 from cmath import sqrt
 import numpy as np
 
-from Solvers import bfs_graph
+from Solvers import a_star_search, bfs_graph, dfs, greedy_best_first, ids
 class Problem:    
     road_map : np.array
     def __init__(self,road_map,targets_positions , init_state , target_state):
@@ -59,7 +59,7 @@ class Problem:
         #return state == self.target_state       
     
     def heuristic(self,state) :
-        return sqrt((state[0] - self.target_state[0]) **2 + (state[1] - self.target_state[1]) **2)
+        return abs(sqrt((state[0] - self.target_state[0]) **2 + (state[1] - self.target_state[1]) **2)) 
     
     def step_cost(self,state,action) : return 1;
 
@@ -68,9 +68,22 @@ class generator :
         self.zc_map  = zc_map;
         self.buildings_locs  = buildings_locs;
         
-    def create_problem(self , current , target) : 
+    def create_problem(self , current , target , algorithm) : 
         prblm = Problem(road_map= self.zc_map ,targets_positions  =self.buildings_locs ,target_state= target , init_state= current)
-        res = bfs_graph(prblm)
+        print(f'Algorithm {algorithm}')
+        res = None
+        if algorithm == 'BFS' : 
+            res = bfs_graph(prblm)
+        elif algorithm == 'DFS' :
+            res = dfs(prblm)
+        elif algorithm == 'IDS' :
+            res = ids(prblm)
+        elif algorithm == 'A*' :
+            res = a_star_search(prblm)
+        elif algorithm == 'Greedy' :
+            res = greedy_best_first(prblm)
+
+        
         if not res : return None
         sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
         #print(sol)

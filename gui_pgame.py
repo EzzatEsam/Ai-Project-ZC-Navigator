@@ -1,6 +1,5 @@
-from multiprocessing import Event
-from tracemalloc import start
-from turtle import update
+
+
 from matplotlib.pyplot import draw
 import pygame
 
@@ -9,10 +8,10 @@ WHITE = (255,255,255)
 BLUE = (0, 0, 128)
 
 MAP_POS = (0,0)
-LABEL1_POS = (850,80)
-LABEL2_POS = (850,160)
-LABEL3_POS = (850,240)
-
+LABEL1_POS = (800,80)
+LABEL2_POS = (800,160)
+LABEL3_POS = (800,240)
+WIDTH_HEIGHT = ( 1280 , 720)
 
 class py_game_window :
     running = False
@@ -24,7 +23,7 @@ class py_game_window :
         pygame.init()
         clock = pygame.time.Clock()
         pygame.display.set_caption("Zc pathfinder")
-        self.screen = pygame.display.set_mode((1000   ,650))
+        self.screen = pygame.display.set_mode(WIDTH_HEIGHT)
         self.label1 = self.create_text_texture('Test1')
         self.label2 = self.create_text_texture('Test2')
         self.label3 = self.create_text_texture('Test3')
@@ -44,6 +43,14 @@ class py_game_window :
                 self.running = False
             if event.type == pygame.MOUSEBUTTONDOWN :
                 self.reset_path()
+                print(pygame.mouse.get_pos())
+                x , y = pygame.mouse.get_pos()
+                if not self.current : 
+                    self.current = (y,x)
+                    self.label1 = self.create_text_texture(f'Current location set at {self.current}')
+                else :
+                    self.target = (y ,x)
+                    self.get_path()
 
         pygame.display.flip()
 
@@ -71,10 +78,24 @@ class py_game_window :
 
 
     def create_text_texture(self,text) :
-        return  pygame.font.Font('freesansbold.ttf', 32).render(text,True,WHITE)
+        return  pygame.font.Font('freesansbold.ttf', 21).render(text,True,WHITE)
 
-    def __init__(self) -> None:
+    def get_path(self) :
+        res = self.gen.create_problem(self.current ,self.target)
+        
+        if res[0] :
+            self.current_path = res[0]
+            self.label2 = self.create_text_texture(f'Path Retrieved , Nodes explored : {res[2]}')
+            self.label3 = self.create_text_texture(f'Total path Cost : {res[1]}')
+
+        self.current = None
+        self.target = None
+
+    def __init__(self , generator) -> None:
+        self.gen: generator = generator
         self.zc_map = pygame.image.load('map.png')
+        self.current = None
+        self.target = None
         self.start()
     
         pass

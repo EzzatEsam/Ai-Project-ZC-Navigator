@@ -1,10 +1,14 @@
+from cmath import sqrt
 import numpy as np
+
+from Solvers import bfs_graph
 class Problem:    
     road_map : np.array
-    def __init__(self,road_map,targets_positions , init_state):
+    def __init__(self,road_map,targets_positions , init_state , target_state):
         self.init_state = init_state
         self.road_map = road_map
         self.targets_positions = targets_positions   
+        self.target_state = target_state
         
     def actions(self, state):
         nxt = []
@@ -33,8 +37,12 @@ class Problem:
 
         if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and self.road_map[y+1,x+1] :
             nxt.append('right_down')
+        
+        
+        return nxt
 
     def result(self, state, action):
+        #print(state , action)
         if action == 'left' : return (state[0] ,state[1] -1)
         if action == 'right' : return (state[0] ,state[1] +1)
         if action == 'up' : return (state[0] -1,state[1] )
@@ -45,8 +53,31 @@ class Problem:
         if action == 'right_down' : return (state[0] +1 ,state[1] +1)
     
     def goal_test(self, state):
-        '''Returns whether or not the given state is a goal state.'''
-        raise NotImplementedError
+        y ,x= state[0] , state[1]
+        yy ,xx= self.target_state[0] , self.target_state[1]
+        return yy ==y and xx == x
+        #return state == self.target_state       
     
     def heuristic(self,state) :
-        raise NotImplementedError
+        return sqrt((state[0] - self.target_state[0]) **2 + (state[1] - self.target_state[1]) **2)
+    
+    def step_cost(self,state,action) : return 1;
+
+class generator :
+    def __init__(self , zc_map , buildings_locs) -> None:
+        self.zc_map  = zc_map;
+        self.buildings_locs  = buildings_locs;
+        
+    def create_problem(self , current , target) : 
+        prblm = Problem(road_map= self.zc_map ,targets_positions  =self.buildings_locs ,target_state= target , init_state= current)
+        res = bfs_graph(prblm)
+        if not res : return None
+        sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
+        #print(sol)
+        
+        path = [ (current[1] , current[0])] 
+        for action in sol :
+            current = prblm.result(action= action ,state= current)
+            path.append((current[1] , current[0]))
+        #print(path)
+        return path ,path_cost ,nodes_explored

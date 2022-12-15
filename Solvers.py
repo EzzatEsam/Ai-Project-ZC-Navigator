@@ -48,14 +48,13 @@ def bfs_graph(problem):
     explored = {problem.init_state}
     
     while frontier:
-        
         node = frontier.pop()
         #print(node.chld_count())
         for action in problem.actions(node.state):
             child = Node.child(problem, node, action)
             if child.state not in explored:
                 if problem.goal_test(child.state):
-                    return solution(child)
+                    return solution(child) , len(explored) +1
                 frontier.appendleft(child)
                 explored.add(child.state)
 

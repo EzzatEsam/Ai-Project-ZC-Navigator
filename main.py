@@ -12,8 +12,8 @@ def main ():
     
     buildings_locs = load_buildings()
     gen = generator(buildings_locs= buildings_locs ,zc_map= zc_roads)
-    wnd = py_game_window(gen)
-    #wnd = gui_handler(gen)
+    #wnd = py_game_window(gen)
+    wnd = gui_handler(gen)
 
 
 

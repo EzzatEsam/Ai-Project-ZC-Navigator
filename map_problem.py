@@ -75,9 +75,9 @@ class generator :
         sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
         #print(sol)
         
-        path = [ (current[1] , current[0])] 
+        path = [ current] 
         for action in sol :
             current = prblm.result(action= action ,state= current)
-            path.append((current[1] , current[0]))
+            path.append(current)
         #print(path)
         return path ,path_cost ,nodes_explored

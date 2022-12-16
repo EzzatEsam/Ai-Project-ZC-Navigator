@@ -4,6 +4,7 @@ import numpy as np
 from Solvers import a_star_search, bfs_graph, dfs, greedy_best_first, ids
 class Problem:    
     road_map : np.array
+
     def __init__(self,road_map,targets_positions , init_state , target_state):
         self.init_state = init_state
         self.road_map = road_map
@@ -61,7 +62,14 @@ class Problem:
     def heuristic(self,state) :
         return abs(sqrt((state[0] - self.target_state[0]) **2 + (state[1] - self.target_state[1]) **2)) 
     
-    def step_cost(self,state,action) : return 1;
+    def step_cost(self,state,action) : 
+        return self.sqrt_distance(state , self.result(state,action));
+
+    def sqrt_distance(self , s1 , s2) :
+        return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
+
+    def is_valid_target(self) : return self.road_map[self.target_state[0],self.target_state[1]] != 0
+
 
 class generator :
     def __init__(self , zc_map , buildings_locs) -> None:
@@ -70,6 +78,7 @@ class generator :
         
     def create_problem(self , current , target , algorithm) : 
         prblm = Problem(road_map= self.zc_map ,targets_positions  =self.buildings_locs ,target_state= target , init_state= current)
+        if not prblm.is_valid_target() : return None;
         print(f'Algorithm {algorithm}')
         res = None
         if algorithm == 'BFS' : 
@@ -86,7 +95,7 @@ class generator :
         
         if not res : return None
         sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
-        #print(sol)
+        print(sol)
         
         path = [ current] 
         for action in sol :
@@ -94,3 +103,6 @@ class generator :
             path.append(current)
         #print(path)
         return path ,path_cost ,nodes_explored
+
+    def create_problem_rooms(self , bl1 ,room1 , bl2 ,room2) :
+        pass

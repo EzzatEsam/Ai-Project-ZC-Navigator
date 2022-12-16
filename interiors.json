@@ -1,0 +1,15 @@
+{
+    "Hb": 
+        {
+            "Bio lab": "Red",
+            "Chem Lab": "Blue",
+            "Lect Room": "Green"
+        }
+    ,
+    "NB": 
+        {
+            "Comm Lab": "Red",
+            "Electronics Lab": "Blue",
+            "CIE lab": "Green"
+        } 
+}

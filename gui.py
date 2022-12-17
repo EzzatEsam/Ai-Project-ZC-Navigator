@@ -19,7 +19,7 @@ HEIGHT = 688
 GEOMETRY  = '1280x720'
 
 DROP_DOWN_X = 1000 ;
-DROP_DOWN_Y = 20 ;
+DROP_DOWN_Y = 30 ;
 
 LABEL1_POS = (800,80)
 LABEL2_POS = (800,160)
@@ -74,9 +74,15 @@ class gui_handler :
         
 
         self.alg_drop_down = OptionMenu(root  , alg_choice , *options)
-
         self.alg_drop_down.place(x= DROP_DOWN_X ,y= DROP_DOWN_Y)
         Label(root , text= 'Algorithm').place(x= DROP_DOWN_X ,y= DROP_DOWN_Y -20)
+
+        h_options = ['ECLD' , 'MANHATTEN'] 
+        self.h_choice = StringVar(root)
+        self.h_choice.set('ECLD')
+        self.h_drop_down = OptionMenu(root  , self.h_choice , *h_options)
+        self.h_drop_down.place(x= DROP_DOWN_X -160,y= DROP_DOWN_Y)
+        Label(root , text= 'Heuristic').place(x= DROP_DOWN_X -160 ,y= DROP_DOWN_Y -20)
 
 
         buildings_opts = [str(bl) for bl in self.buidlings.keys()]
@@ -145,7 +151,7 @@ class gui_handler :
     def get_path_rooms(self) :
         self.reset()
         tm = timer().start()
-        res =  self.gen.create_problem_rooms(  self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get())
+        res =  self.gen.create_problem_rooms(  self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get() , self.h_choice.get())
         elabsed  =tm.get_elabsed()
         if res :
             self.current_path = res[0]
@@ -204,7 +210,7 @@ class gui_handler :
 
     def get_path(self) :
         tm = timer().start()
-        res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get())
+        res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get(), self.h_choice.get())
         elabsed  =tm.get_elabsed()
         if res :
             self.current_path = res[0]

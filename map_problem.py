@@ -6,7 +6,7 @@ from Solvers import a_star_search, bfs_graph, dfs, greedy_best_first, ids
 class Problem:    
     road_map : np.array
 
-    def __init__(self,road_map,targets_positions , init_state , target_state , h_type = 'ecld'):
+    def __init__(self,road_map,targets_positions , init_state , target_state , h_type = 'ECLD'):
         self.init_state = init_state
         self.road_map = road_map
         self.targets_positions = targets_positions   
@@ -62,7 +62,7 @@ class Problem:
         #return state == self.target_state       
     
     def heuristic(self,state) :
-        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ecld' else self.cosine_dist(self.target_state , state)
+        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state)
 
     def step_cost(self,state,action) : 
         return self.sqrt_distance(state , self.result(state,action));
@@ -70,8 +70,8 @@ class Problem:
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
     
-    def cosine_dist(self,s1,s2) :
-        return (s1[0] * s2[0] +s1[0] * s2[0] ) /abs(sqrt((s1[0]**2 + s1[1]) *(s2[0]**2 + s2[1]) ) )
+    def manhatten_dist(self,s1,s2) :
+        return abs(s1[0] - s2[0])  + abs(s1[1] - s2[1])
 
     
 
@@ -79,7 +79,7 @@ class Problem:
 
 class Rooms_Problem:    
     road_map : np.array
-    def __init__(self, road_map, buildings_rooms_inside_map, init_state, target_state):
+    def __init__(self, road_map, buildings_rooms_inside_map, init_state, target_state , h_type):
         self.bl1 = init_state[0]
         self.room1 = init_state[1]
         
@@ -92,16 +92,17 @@ class Rooms_Problem:
         res0 = np.where(buildings_rooms_inside_map[self.bl1] == self.index)[0]
         res1 = np.where(buildings_rooms_inside_map[self.bl1] == self.index)[1]
 
-        self.init_state = (res0[0], res1[0])
+        self.init_state = (res0[int(len(res0)/2)], res1[int(len(res0)/2)])
 
         self.index2 = load_buildings_rooms()[self.bl2].index(self.room2) + 2
         res0 = np.where(buildings_rooms_inside_map[self.bl2] == self.index2)[0]
         res1 = np.where(buildings_rooms_inside_map[self.bl2] == self.index2)[1]
-        self.target_state = (res0[0], res1[0])
+        self.target_state = ( res0[int(len(res0)/2)], res1[int(len(res0)/2)])
 
         self.road_map = road_map
         self.buildings_rooms_inside_map = buildings_rooms_inside_map   
-        
+        self.h_type = h_type
+
     def actions(self, state):
         nxt = []
         y, x = state[0] , state[1]
@@ -150,15 +151,17 @@ class Rooms_Problem:
         #return state == self.target_state       
     
     def heuristic(self,state):
-        return abs(sqrt((state[0] - self.target_state[0]) **2 + (state[1] - self.target_state[1]) **2)) 
+        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state)
     
+
     def step_cost(self,state,action) : 
-        return self.sqrt_distance(state , self.result(state, action));
+        return self.sqrt_distance(state , self.result(state,action));
 
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
-
-    # def is_valid_target(self) : return self.road_map[self.target_state[0], self.target_state[1]] != 0
+    
+    def manhatten_dist(self,s1,s2) :
+        return abs(s1[0] - s2[0])  + abs(s1[1] - s2[1])
 
     def check_available(self, y, x):
         for i in self.buildings_rooms_inside_map.values():
@@ -170,8 +173,8 @@ class generator :
         self.zc_map  = zc_map;
         self.buildings_locs  = buildings_locs;
         
-    def create_problem(self, current, target, algorithm) : 
-        prblm = Problem(road_map= self.zc_map ,targets_positions  =self.buildings_locs ,target_state= target , init_state= current)
+    def create_problem(self, current, target, algorithm ,h) : 
+        prblm = Problem(road_map= self.zc_map ,targets_positions  =self.buildings_locs ,target_state= target , init_state= current ,h_type= h)
         if not prblm.is_valid_target() : return None;
         print(f'Algorithm {algorithm}')
         res = None
@@ -198,9 +201,9 @@ class generator :
         #print(path)
         return path ,path_cost ,nodes_explored
 
-    def create_problem_rooms(self , bl1 ,room1 , bl2 ,room2 ,algorithm):
+    def create_problem_rooms(self , bl1 ,room1 , bl2 ,room2 ,algorithm ,h):
         init_state = (bl1, room1)
-        prblm = Rooms_Problem(road_map= self.zc_map ,buildings_rooms_inside_map =self.buildings_locs, init_state= init_state, target_state = (bl2, room2))
+        prblm = Rooms_Problem(road_map= self.zc_map ,buildings_rooms_inside_map =self.buildings_locs, init_state= init_state, target_state = (bl2, room2) , h_type=h)
         #if not prblm.is_valid_target() : return None;
 
         print(f'Algorithm {algorithm}')

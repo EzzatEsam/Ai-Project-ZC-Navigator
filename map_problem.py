@@ -104,5 +104,5 @@ class generator :
         #print(path)
         return path ,path_cost ,nodes_explored
 
-    def create_problem_rooms(self , bl1 ,room1 , bl2 ,room2) :
+    def create_problem_rooms(self , bl1 ,room1 , bl2 ,room2 ,algorithm) :
         pass

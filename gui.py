@@ -116,7 +116,7 @@ class gui_handler :
 
         
         self.window = window
-        self.alf_choice = alg_choice
+        self.alg_choice = alg_choice
         self.b1_choice = bl1_choice
         self.b2_choice = bl2_choice
         self.room1_choice = room1_choice
@@ -143,7 +143,7 @@ class gui_handler :
     def get_path_rooms(self) :
         self.reset()
         tm = timer().start()
-        res =  self.gen.create_problem_rooms(  self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get())
+        res =  self.gen.create_problem_rooms(  self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get())
         elabsed  =tm.get_elabsed()
         if res :
             self.current_path = res[0]
@@ -202,7 +202,7 @@ class gui_handler :
 
     def get_path(self) :
         tm = timer().start()
-        res = self.gen.create_problem(self.current ,self.target ,self.alf_choice.get())
+        res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get())
         elabsed  =tm.get_elabsed()
         if res :
             self.current_path = res[0]

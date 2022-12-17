@@ -44,6 +44,8 @@ class gui_handler :
     def __init__(self , gen) -> None:
         self.gen = gen
         self.buidlings = load_buildings_rooms()
+        self.current_ind = None
+        self.target_ind = None
         root = Tk();
         root.geometry(GEOMETRY)
         root.resizable(False, False)

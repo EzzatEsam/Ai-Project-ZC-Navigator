@@ -12,4 +12,11 @@
             "Electronics Lab": "Blue",
             "CIE lab": "Green"
         } 
+    ,
+    "AB" :
+    {
+        "Zone A": "Red",
+        "Zone B": "Blue",
+        "Zone C": "Green"
+    }
 }

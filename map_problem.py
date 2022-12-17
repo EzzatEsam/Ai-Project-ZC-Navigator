@@ -5,11 +5,12 @@ from Solvers import a_star_search, bfs_graph, dfs, greedy_best_first, ids
 class Problem:    
     road_map : np.array
 
-    def __init__(self,road_map,targets_positions , init_state , target_state):
+    def __init__(self,road_map,targets_positions , init_state , target_state , h_type = 'ecld'):
         self.init_state = init_state
         self.road_map = road_map
         self.targets_positions = targets_positions   
         self.target_state = target_state
+        self.h_type = h_type
         
     def actions(self, state):
         nxt = []
@@ -60,13 +61,18 @@ class Problem:
         #return state == self.target_state       
     
     def heuristic(self,state) :
-        return abs(sqrt((state[0] - self.target_state[0]) **2 + (state[1] - self.target_state[1]) **2)) 
-    
+        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ecld' else self.cosine_dist(self.target_state , state)
+
     def step_cost(self,state,action) : 
         return self.sqrt_distance(state , self.result(state,action));
 
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
+    
+    def cosine_dist(self,s1,s2) :
+        return (s1[0] * s2[0] +s1[0] * s2[0] ) /abs(sqrt((s1[0]**2 + s1[1]) *(s2[0]**2 + s2[1]) ) )
+
+    
 
     def is_valid_target(self) : return self.road_map[self.target_state[0],self.target_state[1]] != 0
 

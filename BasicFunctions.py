@@ -21,7 +21,7 @@ def Encoding(img_name: str, encoding_parameter: int) -> np.array:
     img_list[img_list != 0] =    encoding_parameter        
     return img_list.astype(int)
 
-def get_rooms(img_path ) :
+def get_rooms(img_path) :
     
     img = cv2.imread(img_path)
     

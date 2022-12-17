@@ -106,28 +106,28 @@ class Rooms_Problem:
         nxt = []
         y, x = state[0] , state[1]
         
-        if y > 0 and self.road_map[y - 1, x] or self.check_available(y - 1, x):
+        if y > 0 and (self.road_map[y - 1, x] or self.check_available(y - 1, x)):
             nxt.append('up')
         
-        if x > 0 and self.road_map[y, x - 1] or self.check_available(y, x - 1):
+        if x > 0 and (self.road_map[y, x - 1] or self.check_available(y, x - 1)):
             nxt.append('left')
         
-        if y < len(self.road_map) -1 and self.road_map[y+1,x] or self.check_available(y + 1, x):
+        if y < len(self.road_map) -1 and( self.road_map[y+1,x] or self.check_available(y + 1, x)):
             nxt.append('down')
 
-        if x < len(self.road_map[1]) -1 and self.road_map[y,x+1] or self.check_available(y, x + 1):
+        if x < len(self.road_map[1]) -1 and (self.road_map[y,x+1] or self.check_available(y, x + 1)):
             nxt.append('right')
 
-        if y > 0 and  x > 0 and self.road_map[y-1,x-1] or self.check_available(y - 1, x - 1):
+        if y > 0 and  x > 0 and( self.road_map[y-1,x-1] or self.check_available(y - 1, x - 1)):
             nxt.append('left_up')
 
-        if y > 0 and  x < len(self.road_map[1]) -1 and self.road_map[y-1,x+1] or self.check_available(y - 1, x + 1):
+        if y > 0 and  x < len(self.road_map[1]) -1 and (self.road_map[y-1,x+1] or self.check_available(y - 1, x + 1)):
             nxt.append('right_up')
 
-        if y < len(self.road_map) -1 and  x > 0 and self.road_map[y+1,x-1] or self.check_available(y + 1, x - 1):
+        if y < len(self.road_map) -1 and  x > 0 and (self.road_map[y+1,x-1] or self.check_available(y + 1, x - 1)):
             nxt.append('left_down')
 
-        if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and self.road_map[y+1,x+1] or self.check_available(y + 1, x + 1):
+        if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and (self.road_map[y+1,x+1] or self.check_available(y + 1, x + 1)):
             nxt.append('right_down')
         
         

@@ -107,28 +107,28 @@ class Rooms_Problem:
         nxt = []
         y, x = state[0] , state[1]
         
-        if y > 0 and (self.road_map[y - 1, x] or self.check_available(y - 1, x)):
+        if y > 0 and (self.road_map[y - 1, x] or self.check_available(y - 1, x , state)):
             nxt.append('up')
         
-        if x > 0 and (self.road_map[y, x - 1] or self.check_available(y, x - 1)):
+        if x > 0 and (self.road_map[y, x - 1] or self.check_available(y, x - 1 , state)):
             nxt.append('left')
         
-        if y < len(self.road_map) -1 and( self.road_map[y+1,x] or self.check_available(y + 1, x)):
+        if y < len(self.road_map) -1 and( self.road_map[y+1,x] or self.check_available(y + 1, x , state)):
             nxt.append('down')
 
-        if x < len(self.road_map[1]) -1 and (self.road_map[y,x+1] or self.check_available(y, x + 1)):
+        if x < len(self.road_map[1]) -1 and (self.road_map[y,x+1] or self.check_available(y, x + 1 , state)):
             nxt.append('right')
 
-        if y > 0 and  x > 0 and( self.road_map[y-1,x-1] or self.check_available(y - 1, x - 1)):
+        if y > 0 and  x > 0 and( self.road_map[y-1,x-1] or self.check_available(y - 1, x - 1 , state)):
             nxt.append('left_up')
 
-        if y > 0 and  x < len(self.road_map[1]) -1 and (self.road_map[y-1,x+1] or self.check_available(y - 1, x + 1)):
+        if y > 0 and  x < len(self.road_map[1]) -1 and (self.road_map[y-1,x+1] or self.check_available(y - 1, x + 1, state)):
             nxt.append('right_up')
 
-        if y < len(self.road_map) -1 and  x > 0 and (self.road_map[y+1,x-1] or self.check_available(y + 1, x - 1)):
+        if y < len(self.road_map) -1 and  x > 0 and (self.road_map[y+1,x-1] or self.check_available(y + 1, x - 1 , state)):
             nxt.append('left_down')
 
-        if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and (self.road_map[y+1,x+1] or self.check_available(y + 1, x + 1)):
+        if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and (self.road_map[y+1,x+1] or self.check_available(y + 1, x + 1 ,state)):
             nxt.append('right_down')
         
         
@@ -163,9 +163,10 @@ class Rooms_Problem:
     def manhatten_dist(self,s1,s2) :
         return abs(s1[0] - s2[0])  + abs(s1[1] - s2[1])
 
-    def check_available(self, y, x):
-        for i in self.buildings_rooms_inside_map.values():
-            if i[y, x] != 0: return True
+    def check_available(self, y, x ,current):
+        current_y , current_x = current
+        for bld in self.buildings_rooms_inside_map.values():
+            if bld[y, x] == 1 or (bld[y, x]  and  self.road_map[current_y , current_x] == 0) : return True
         return False
 
 class generator :

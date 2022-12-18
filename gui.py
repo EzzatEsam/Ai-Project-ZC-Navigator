@@ -1,4 +1,3 @@
-import imp
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
@@ -49,6 +48,7 @@ class gui_handler :
         root = Tk();
         root.geometry(GEOMETRY)
         root.resizable(False, False)
+        root.title('ZC pathfinder')
         root.bind("<Button 1>",lambda evnt :print((evnt.x, evnt.y)) )
         
 
@@ -68,7 +68,7 @@ class gui_handler :
         self.label3.place(x=LABEL3_POS[0] ,y=LABEL3_POS[1])
 
 
-        options = ['BFS' , 'DFS' , 'IDS' , 'A*' , 'Greedy']
+        options = ['BFS' , 'DFS' , 'IDS' , 'A*' , 'Greedy','HillClimbing' ,'Annealing'] 
         alg_choice = StringVar(root)
         alg_choice.set('BFS')
         
@@ -171,7 +171,7 @@ class gui_handler :
         print(evnt.x)
         print(evnt.y)
         
-        if self.target :
+        if self.target  or self.current_path:
             self.reset()
 
 

@@ -7,9 +7,7 @@ from loader import *
 
 
 def main ():
-    print('hi there')
     zc_roads = load_main_map();
-    
     buildings_locs = load_buildings()
     gen = generator(buildings_locs= buildings_locs ,zc_map= zc_roads)
     

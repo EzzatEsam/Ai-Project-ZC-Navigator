@@ -10,9 +10,7 @@ WHITE = (255,255,255)
 BLUE = (0, 0, 128)
 
 MAP_POS = (0,0)
-LABEL1_POS = (800,80)
-LABEL2_POS = (800,160)
-LABEL3_POS = (800,240)
+
 WIDTH = 790
 HEIGHT = 688
 GEOMETRY  = '1280x720'
@@ -60,17 +58,17 @@ class gui_handler :
         self.map_img = ImageTk.PhotoImage(img)
         self.zc_map = window.create_image(0,0 ,image = self.map_img , anchor="nw")
         
-        self.label1 = Label(root  , text = 'Label 1')
+        self.label1 = Label(root  , text = '' , wraplength= 300)
         self.label1.place(x=LABEL1_POS[0] ,y=LABEL1_POS[1])
-        self.label2 = Label(root  , text= 'Label 1')
+        self.label2 = Label(root  , text= '')
         self.label2.place(x=LABEL2_POS[0] ,y=LABEL2_POS[1])
-        self.label3 = Label(root  , text= 'Label 1')
+        self.label3 = Label(root  , text= '')
         self.label3.place(x=LABEL3_POS[0] ,y=LABEL3_POS[1])
 
 
         options = ['BFS' , 'DFS' , 'IDS' , 'A*' , 'Greedy','HillClimbing' ,'Annealing'] 
         alg_choice = StringVar(root)
-        alg_choice.set('BFS')
+        alg_choice.set('A*')
         
 
         self.alg_drop_down = OptionMenu(root  , alg_choice , *options)
@@ -156,7 +154,7 @@ class gui_handler :
         if res :
             self.current_path = res[0]
             self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
-            self.label3.config(text =f'Total path Cost : {res[1]}') 
+            self.label3.config(text =f'Total path Cost : {res[1] :.3f}') 
 
         else :
             messagebox.showinfo("Error happened", "Invalid input")
@@ -171,8 +169,8 @@ class gui_handler :
         print(evnt.x)
         print(evnt.y)
         
-        if self.target  or self.current_path:
-            self.reset()
+        
+        self.reset()
 
 
         if not self.current : 
@@ -184,12 +182,13 @@ class gui_handler :
         else :
             self.target = (evnt.y, evnt.x)
             points = [evnt.x , evnt.y , evnt.x +10 , evnt.y -20 , evnt.x -10 ,evnt.y-20]
-            self.target_ind = self.window.create_polygon(points ,fill = 'green')
+            self.target_ind = self.window.create_polygon(points ,fill = 'red')
             self.label1.config(text= f'Current location set at {self.current} ,Target location set at {self.target} ') 
             self.get_path()
         
 
     def draw_path(self) :
+        self.reset()
         if len(self.current_path) > 1 :
             lines = []
             for i in range(len(self.current_path) -1) :
@@ -198,15 +197,26 @@ class gui_handler :
                 self.drawed_lines.append(self.window.create_line(ln[0][1] , ln[0][0] , ln[1][1] , ln[1][0]  , fill="blue", width=5 )) 
                 #pygame.draw.line(self.screen, BLUE, ln[0],ln[1], 5)
 
+            x = self.current_path[0][1]
+            y = self.current_path[0][0]
+            points = [x , y , x +10 , y -20 , x -10 ,y-20]
+            self.current_ind = self.window.create_polygon(points ,fill = 'green')
+            x = self.current_path[-1][1]
+            y = self.current_path[-1][0]
+            points = [x , y , x +10 , y -20 , x -10 ,y-20]
+            self.target_ind = self.window.create_polygon(points ,fill = 'red')
+
+        self.current_path = []
+        self.current = None
+        self.target = None
+
     def reset(self) :
         for ln in self.drawed_lines :
             self.window.delete(ln)
         
         if self.current_ind : self.window.delete(self.current_ind)
         if self.target_ind : self.window.delete(self.target_ind)
-        self.current = None
-        self.target = None
-        self.current_path = []
+        
 
     def get_path(self) :
         tm = timer().start()
@@ -215,7 +225,7 @@ class gui_handler :
         if res :
             self.current_path = res[0]
             self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
-            self.label3.config(text =f'Total path Cost : {res[1]}') 
+            self.label3.config(text =f'Total path Cost : {res[1] :.3f}') 
 
         else :
             messagebox.showinfo("Error happened", "Invalid input")

@@ -1,4 +1,5 @@
 from cmath import sqrt
+from dis import Instruction
 import numpy as np
 from loader import *
 
@@ -147,7 +148,7 @@ class Rooms_Problem:
     
     def goal_test(self, state):
         y, x= state[0] , state[1]
-        return self.buildings_rooms_inside_map[self.bl2][y, x] == self.index2
+        return self.buildings_rooms_inside_map[self.bl2][y, x] == self.index2 and self.road_map[y,x] == 0
         #return state == self.target_state       
     
     def heuristic(self,state):
@@ -164,7 +165,7 @@ class Rooms_Problem:
         return abs(s1[0] - s2[0])  + abs(s1[1] - s2[1])
 
     def check_available(self, y, x ,current):
-        current_y , current_x = current
+        current_y , current_x = current[0] , current[1]
         for bld in self.buildings_rooms_inside_map.values():
             if bld[y, x] == 1 or (bld[y, x]  and  self.road_map[current_y , current_x] == 0) : return True
         return False
@@ -193,14 +194,14 @@ class generator :
         
         if not res : return None
         sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
-        print(sol)
         
         path = [ current] 
         for action in sol :
             current = prblm.result(action= action ,state= current)
             path.append(current)
-        #print(path)
-        return path ,path_cost ,nodes_explored
+        print(self.get_instructions(sol))
+        print(path)
+        return path ,path_cost ,nodes_explored , 
 
     def create_problem_rooms(self , bl1 ,room1 , bl2 ,room2 ,algorithm ,h):
         init_state = (bl1, room1)
@@ -223,11 +224,26 @@ class generator :
         
         if not res : return None
         sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
-        print(sol)
         current = prblm.init_state
         path = [current] 
         for action in sol :
             current = prblm.result(action= action ,state= current)
             path.append(current)
-        #print(path)
+        print(self.get_instructions(sol))
+        print(path)
         return path ,path_cost ,nodes_explored
+
+    def get_instructions(self,path) :
+        instructions = 'Instructions :'
+        idx = 0
+        while idx < len(path) :
+            idx2 = idx +1
+            while idx2 != len(path) and path[idx2] == path[idx] :
+                idx2+=1
+            instructions +=(f'{idx2 - idx}x {path[idx]} ,')
+            idx = idx2
+
+        return instructions
+                
+
+            

@@ -5,15 +5,16 @@ from loader import *
 from math import exp
 from typing import Dict
 
-from Solvers import a_star_search, bfs_graph, dfs, greedy_best_first, ids, random_restart_hill_climbing, simulated_annealing, local_search_states
+from Solvers import *
 class Problem:    
     
-    def __init__(self, road_map: np.array, init_state: tuple, target_state: tuple, h_type: str = 'ecld'):
+    def __init__(self, road_map: np.array, init_state: tuple, target_state: tuple, h_type: str = 'ecld' ,bad_road_penalty = 0):
         self.init_state = init_state
         self.road_map = road_map
         #self.targets_positions = targets_positions   
         self.target_state = target_state
         self.h_type = h_type
+        self.bad_road_penalty = bad_road_penalty
         
     def actions(self, state):
         nxt = []
@@ -67,7 +68,11 @@ class Problem:
         return self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state)
 
     def step_cost(self,state,action) : 
-        return self.sqrt_distance(state , self.result(state,action));
+        y1 ,x1 = state
+        y2 , x2 = self.result(state ,action)
+        return (1 if (y1 == y2 or x1 == x2) else 1.41421356)  + (
+            self.bad_road_penalty * (1 if (y1 == y2 or x1 == x2) else 1.41421356) if self.road_map[y2,x2] >1 else 0 );
+
 
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
@@ -80,7 +85,7 @@ class Problem:
     def is_valid_target(self) : return self.road_map[self.target_state[0],self.target_state[1]] != 0
 
 class Rooms_Problem:    
-    def __init__(self, road_map: np.array, buildings_maps: Dict[str, np.array], init_state: tuple[str, str], target_state: tuple[str, str], h_type: str = 'ecld'):
+    def __init__(self, road_map: np.array, buildings_maps: Dict[str, np.array], init_state: tuple[str, str], target_state: tuple[str, str], h_type: str = 'ecld' , bad_road_penalty = 0) :
         self.bl1 = init_state[0]
         self.room1 = init_state[1]
         
@@ -104,6 +109,8 @@ class Rooms_Problem:
         self.buildings_maps = buildings_maps 
 
         self.h_type = h_type
+        self.bad_road_penalty = bad_road_penalty
+
     def actions(self, state):
         nxt = []
         y, x = state[0] , state[1]
@@ -167,7 +174,7 @@ class Rooms_Problem:
     def step_cost(self,state,action) : 
         y1 ,x1 = state
         y2 , x2 = self.result(state ,action)
-        return 1 if (y1 == y2 or x1 == x2) else 1.41421356;
+        return (1 if (y1 == y2 or x1 == x2) else 1.41421356)  + (self.bad_road_penalty * (1 if (y1 == y2 or x1 == x2) else 1.41421356) if self.road_map[y2,x2] >1 else 0 );
 
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
@@ -191,8 +198,9 @@ class generator :
         self.zc_map  = zc_map;
         self.buildings_locs  = buildings_locs;
         
-    def create_problem(self, current: tuple[int, int], target: tuple[int, int], algorithm: str , h ) : 
-        prblm = Problem(road_map= self.zc_map, target_state= target , init_state= current , h_type= h)
+    def create_problem(self, current: tuple[int, int], target: tuple[int, int], algorithm: str , h ,p) : 
+        prblm = Problem(road_map= self.zc_map, target_state= target , init_state= current ,
+         h_type= h ,bad_road_penalty= int(p))
         if not prblm.is_valid_target() : return None;
         print(f'Algorithm {algorithm}')
         res = None
@@ -226,9 +234,10 @@ class generator :
         print(path)
         return path ,path_cost ,nodes_explored , 
 
-    def create_problem_rooms(self , bl1: str, room1: str, bl2: str, room2: str, algorithm: str , h):
+    def create_problem_rooms(self , bl1: str, room1: str, bl2: str, room2: str, algorithm: str , h ,p):
         init_state = (bl1, room1)
-        prblm = Rooms_Problem(road_map = self.zc_map, buildings_maps = self.buildings_locs, init_state = init_state, target_state = (bl2, room2), h_type =h)
+        prblm = Rooms_Problem(road_map = self.zc_map, buildings_maps = self.buildings_locs, 
+        init_state = init_state, target_state = (bl2, room2), h_type =h ,bad_road_penalty=int(p) )
         #if not prblm.is_valid_target() : return None;
 
         print(f'Algorithm {algorithm}')

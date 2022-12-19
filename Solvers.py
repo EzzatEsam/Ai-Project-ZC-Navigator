@@ -169,14 +169,14 @@ def a_star_search(problem, verbose=False):
 
 
 
-states_list = []
+
 
 def hill_climbing(problem):
     ''' Hill climbing search implementation.'''
     current_state = problem.init_state
     current_value = problem.heuristic(current_state)
 
-    
+    states_list = [current_state]
     while True:
         next_state, next_value = None, None
 
@@ -187,16 +187,10 @@ def hill_climbing(problem):
             if next_value is None or next_value > new_value:
                 next_state, next_value = new_state, new_value
 
-        if current_value <= next_value: return current_state
+        if current_value <= next_value: break 
         current_state, current_value = next_state, next_value
         states_list.append(current_state)
-
-def random_restart_hill_climbing(problem, verbose=False):
-    '''Random-restart hill climbing search implementation.'''
-    while True:  # Keep repeating till the problem is solved
-        #problem = problem_gen()  # Generate a new problem instance (only works if each problem instance is different from the previous, e.g., random initial state)
-        solution_state = hill_climbing(problem, verbose)  # Try to solve the problem instance with hill climbing
-        if problem.goal_test(solution_state):  return solution_state  # If succeeded, return the solution
+    return states_list
 
 
 
@@ -204,27 +198,27 @@ def random_restart_hill_climbing(problem, verbose=False):
 def simulated_annealing(problem, schedule):
     '''Simulated annealing search implementation.'''
     current_state = problem.init_state
-    current_value = problem.heuristic(current_state)
-
     
+    states_list = [current_state]
     for t in count():
         T = schedule(t)  # A function that determines the "temperature" (acceptability of a bad state) as a function of the step count
-        
-        if current_value == 0 or T == 0: return current_state  # Return if a goal state is found or if the temperature hits 0
+        current_value = problem.heuristic(current_state)
+        if current_value == 0 or T < 1e-30: return states_list  
         next_states = [problem.result(current_state, action) for action in problem.actions(current_state)]  # Generate all possible next states
-        while True:  # Repeat the following till the current state is updated
-            next_state = choice(next_states)  # Choose a random next state
-            states_list.append(next_state)
-            next_value = problem.heuristic(next_state)
-            delta = current_value - next_value
-            if delta > 0 or random() < exp(delta / T):  # Accept the randomly chosen state immediately if it is better than the current state or with a probability (exponentially) proportional to the temperature and how bad it is
-                current_state, current_value = next_state, next_value
-                states_list.append(current_state)
-                break
+        # while True:  # Repeat the following till the current state is updated
+        next_state = choice(next_states)  # Choose a random next state
+        next_value = problem.heuristic(next_state)
+        delta = current_value - next_value
+        if delta > 0 or random() < exp(delta / T):  # Accept the randomly chosen state immediately if it is better than the current state or with a probability (exponentially) proportional to the temperature and how bad it is
+            current_state, current_value = next_state, next_value
+            states_list.append(current_state)
+                
+                
+    return states_list 
 
 
 def local_search_states(problem, type): 
-    states_list.clear()
-    if type == 'hill_climbing': hill_climbing(problem)
-    elif type == 'Simulated Annealing': simulated_annealing(problem, lambda t: exp(-t))
-    return states_list
+    
+    if type == 'hill_climbing': return hill_climbing(problem)
+    elif type == 'Simulated Annealing': return  simulated_annealing(problem, lambda t: exp(-t/1000))
+    

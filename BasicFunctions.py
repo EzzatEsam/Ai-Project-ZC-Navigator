@@ -17,11 +17,11 @@ def Encoding(img_name: str, encoding_parameter: int) -> np.array:
     img_list[img_list != 0] = encoding_parameter        
     return img_list.astype(int)
 
-def get_rooms(img_name: str) -> np.array:
+def get_colors_encoding(img_name: str) -> np.array:
     
     img = cv2.imread(img_name)
     
-    whites = (cv2.inRange(img, (250, 250, 250), (255, 255, 255)))
+    whites = (cv2.inRange(img, (150, 150, 150), (255, 255, 255)))
     blues = (cv2.inRange(img, (250, 0, 0), (255, 10, 10)))
     greens = (cv2.inRange(img, (0, 250, 0), (10, 255, 10)))
     reds = (cv2.inRange(img, (0, 0, 250), (10, 10, 255)))

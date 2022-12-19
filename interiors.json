@@ -18,5 +18,11 @@
         "Zone A": "Red",
         "Zone B": "Blue",
         "Zone C": "Green"
+    } ,
+    "DORMS" :
+    {
+        "Zone A": "Red",
+        "Zone B": "Blue",
+        "Zone C": "Green"
     }
 }

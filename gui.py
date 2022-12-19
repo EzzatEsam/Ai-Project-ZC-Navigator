@@ -16,7 +16,7 @@ WIDTH = 790
 HEIGHT = 688
 GEOMETRY  = '1280x720'
 
-DROP_DOWN_X = 1000 ;
+DROP_DOWN_X = 990 ;
 DROP_DOWN_Y = 30 ;
 
 LABEL1_POS = (800,80)
@@ -82,6 +82,13 @@ class gui_handler :
         self.h_drop_down = OptionMenu(root  , self.h_choice , *h_options)
         self.h_drop_down.place(x= DROP_DOWN_X -160,y= DROP_DOWN_Y)
         Label(root , text= 'Heuristic').place(x= DROP_DOWN_X -160 ,y= DROP_DOWN_Y -20)
+
+        p_options = ['0' , '2' ,'4' ,'6' ,'8' ,'10'] 
+        self.p_choice = StringVar(root)
+        self.p_choice.set('0')
+        self.p_drop_down = OptionMenu(root  , self.p_choice , *p_options)
+        self.p_drop_down.place(x= DROP_DOWN_X +160,y= DROP_DOWN_Y)
+        Label(root , text= 'Unpaved road penalty').place(x= DROP_DOWN_X +160 ,y= DROP_DOWN_Y -20)
 
 
         buildings_opts = [str(bl) for bl in self.buidlings.keys()]
@@ -150,14 +157,16 @@ class gui_handler :
     def get_path_rooms(self) :
         self.reset()
         tm = timer().start()
-        res =  self.gen.create_problem_rooms(self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get() , self.h_choice.get())
+        res =  self.gen.create_problem_rooms(self.b1_choice.get() ,self.room1_choice.get() ,
+         self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get() ,
+          self.h_choice.get() , self.p_choice.get())
         elabsed  =tm.get_elabsed()
         if res:
             if type(res) == list: self.current_path = res
             else:
                 self.current_path = res[0]
                 self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
-                self.label3.config(text =f'Total path Cost : {res[1]}') 
+                self.label3.config(text =f'Total path Cost : {res[1] :.3f}') 
              
 
         else :
@@ -224,7 +233,7 @@ class gui_handler :
 
     def get_path(self):
         tm = timer().start()
-        res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get(), self.h_choice.get())
+        res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get(), self.h_choice.get() , self.p_choice.get())
         elabsed  =tm.get_elabsed()
 
         
@@ -235,7 +244,7 @@ class gui_handler :
             else:
                 self.current_path = res[0]
                 self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
-                self.label3.config(text =f'Total path Cost : {res[1]}') 
+                self.label3.config(text =f'Total path Cost : {res[1] :.3f}') 
 
         else :
             messagebox.showinfo("Error happened", "Invalid input")

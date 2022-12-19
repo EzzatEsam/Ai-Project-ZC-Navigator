@@ -152,11 +152,22 @@ class Rooms_Problem:
         #return state == self.target_state       
     
     def heuristic(self,state):
-        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state)
+        dist = self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state) ; 
+        # if dist <= 10 :
+        #     res0 = np.where(self.buildings_rooms_inside_map[self.bl1] == self.index)[0]
+        #     res1 = np.where(self.buildings_rooms_inside_map[self.bl1] == self.index)[1]
+        #     if  self.h_type == 'ECLD' :
+        #         dist = min( [ self.sqrt_distance((y,x),state) for x , y in zip(res0 , res1)])
+        #     else :
+        #         dist = min( [ self.manhatten_dist((y,x),state) for x , y in zip(res0 , res1)])
+            
+        return  dist
     
 
     def step_cost(self,state,action) : 
-        return self.sqrt_distance(state , self.result(state,action));
+        y1 ,x1 = state
+        y2 , x2 = self.result(state ,action)
+        return 1 if (y1 == y2 or x1 == x2) else 1.41421356;
 
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 

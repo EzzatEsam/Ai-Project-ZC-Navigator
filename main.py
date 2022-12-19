@@ -9,13 +9,13 @@ from loader import *
 def main ():
     zc_roads = load_main_map();
     buildings_locs = load_buildings()
-    gen = generator(buildings_locs= buildings_locs ,zc_map= zc_roads)
+    gen = generator(buildings_locs = buildings_locs, zc_map = zc_roads)
     
     #wnd = py_game_window(gen)
     wnd = gui_handler(gen)
 
 
 
-if __name__ ==  "__main__"  :
+if __name__ ==  "__main__":
     main()
 

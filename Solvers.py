@@ -104,11 +104,11 @@ def dls(problem , limit ) :
                 frontier.append(child)
     return None , explored 
 
-def ids(problem  ,start_limit = 0) :
+def ids(problem, start_limit = 0) :
     limit = start_limit
     explored =0
-    while 1 :
-        result = dls(problem,limit)
+    while 1:
+        result = dls(problem, limit)
         if result[0] is not None :
             return result[0] , explored + result[1]
         explored += result[1]

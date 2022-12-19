@@ -16,8 +16,8 @@ WIDTH = 790
 HEIGHT = 688
 GEOMETRY  = '1280x720'
 
-DROP_DOWN_X = 990 ;
-DROP_DOWN_Y = 30 ;
+DROP_DOWN_X = 990;
+DROP_DOWN_Y = 30;
 
 LABEL1_POS = (800,80)
 LABEL2_POS = (800,160)
@@ -157,10 +157,12 @@ class gui_handler :
     def get_path_rooms(self) :
         self.reset()
         tm = timer().start()
+
         res =  self.gen.create_problem_rooms(self.b1_choice.get() ,self.room1_choice.get() ,
-         self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get() ,
-          self.h_choice.get() , self.p_choice.get())
-        elabsed  =tm.get_elabsed()
+        self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get() ,
+        self.h_choice.get() , self.p_choice.get())
+
+        elabsed = tm.get_elabsed()
         if res:
             if type(res) == list: self.current_path = res
             else:
@@ -236,7 +238,9 @@ class gui_handler :
         res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get(), self.h_choice.get() , self.p_choice.get())
         elabsed  =tm.get_elabsed()
 
-        
+        f = open('test.txt', 'w')
+        f.write(str(res))
+        f.close()
         print(res)
         
         if res:

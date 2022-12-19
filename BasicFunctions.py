@@ -22,9 +22,9 @@ def get_rooms(img_name: str) -> np.array:
     img = cv2.imread(img_name)
     
     whites = (cv2.inRange(img, (250, 250, 250), (255, 255, 255)))
-    reds = (cv2.inRange(img, (250, 0, 0), (255, 10, 10)))
+    blues = (cv2.inRange(img, (250, 0, 0), (255, 10, 10)))
     greens = (cv2.inRange(img, (0, 250, 0), (10, 255, 10)))
-    blues = (cv2.inRange(img, (0, 0, 250), (10, 10, 255)))
+    reds = (cv2.inRange(img, (0, 0, 250), (10, 10, 255)))
     
 
 

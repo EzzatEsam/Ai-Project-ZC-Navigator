@@ -1,4 +1,5 @@
 from cmath import sqrt
+from dis import Instruction
 import numpy as np
 from loader import *
 from math import exp
@@ -63,7 +64,7 @@ class Problem:
         #return state == self.target_state       
     
     def heuristic(self,state) :
-        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ecld' else self.cosine_dist(self.target_state , state)
+        return self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state)
 
     def step_cost(self,state,action) : 
         return self.sqrt_distance(state , self.result(state,action));
@@ -71,8 +72,8 @@ class Problem:
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
     
-    def cosine_dist(self,s1,s2) :
-        return (s1[0] * s2[0] +s1[0] * s2[0] ) /abs(sqrt((s1[0]**2 + s1[1]) *(s2[0]**2 + s2[1]) ) )
+    def manhatten_dist(self,s1,s2) :
+        return abs(s1[0] - s2[0])  + abs(s1[1] - s2[1])
 
     
 
@@ -92,7 +93,7 @@ class Rooms_Problem:
         res0 = np.where(buildings_maps[self.bl1] == self.index)[0]
         res1 = np.where(buildings_maps[self.bl1] == self.index)[1]
 
-        self.init_state = (res0[0], res1[0])
+        self.init_state = (res0[int(len(res0)/2)], res1[int(len(res0)/2)])
 
         self.index2 = load_buildings_rooms()[self.bl2].index(self.room2) + 2
         res0 = np.where(buildings_maps[self.bl2] == self.index2)[0]
@@ -107,28 +108,28 @@ class Rooms_Problem:
         nxt = []
         y, x = state[0] , state[1]
         
-        if y > 0 and self.road_map[y - 1, x] or self.check_available(y - 1, x):
+        if y > 0 and (self.road_map[y - 1, x] or self.check_available(y - 1, x , state)):
             nxt.append('up')
         
-        if x > 0 and self.road_map[y, x - 1] or self.check_available(y, x - 1):
+        if x > 0 and (self.road_map[y, x - 1] or self.check_available(y, x - 1 , state)):
             nxt.append('left')
         
-        if y < len(self.road_map) -1 and self.road_map[y+1,x] or self.check_available(y + 1, x):
+        if y < len(self.road_map) -1 and( self.road_map[y+1,x] or self.check_available(y + 1, x , state)):
             nxt.append('down')
 
-        if x < len(self.road_map[1]) -1 and self.road_map[y,x+1] or self.check_available(y, x + 1):
+        if x < len(self.road_map[1]) -1 and (self.road_map[y,x+1] or self.check_available(y, x + 1 , state)):
             nxt.append('right')
 
-        if y > 0 and  x > 0 and self.road_map[y-1,x-1] or self.check_available(y - 1, x - 1):
+        if y > 0 and  x > 0 and( self.road_map[y-1,x-1] or self.check_available(y - 1, x - 1 , state)):
             nxt.append('left_up')
 
-        if y > 0 and  x < len(self.road_map[1]) -1 and self.road_map[y-1,x+1] or self.check_available(y - 1, x + 1):
+        if y > 0 and  x < len(self.road_map[1]) -1 and (self.road_map[y-1,x+1] or self.check_available(y - 1, x + 1, state)):
             nxt.append('right_up')
 
-        if y < len(self.road_map) -1 and  x > 0 and self.road_map[y+1,x-1] or self.check_available(y + 1, x - 1):
+        if y < len(self.road_map) -1 and  x > 0 and (self.road_map[y+1,x-1] or self.check_available(y + 1, x - 1 , state)):
             nxt.append('left_down')
 
-        if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and self.road_map[y+1,x+1] or self.check_available(y + 1, x + 1):
+        if y < len(self.road_map) -1 and  x < len(self.road_map[1]) -1 and (self.road_map[y+1,x+1] or self.check_available(y + 1, x + 1 ,state)):
             nxt.append('right_down')
         
         
@@ -154,6 +155,7 @@ class Rooms_Problem:
         return self.sqrt_distance(self.target_state,state) if self.h_type == 'ecld' else self.cosine_dist(self.target_state , state)
 
     def step_cost(self,state,action) : 
+        return self.sqrt_distance(state , self.result(state,action));
         return self.sqrt_distance(state , self.result(state,action));
 
     def sqrt_distance(self , s1 , s2) :
@@ -200,14 +202,14 @@ class generator :
         
         if not res : return None
         sol , path_cost ,nodes_explored = res[0][0] , res[0][1] ,res[1]
-        print(sol)
         
         path = [ current] 
         for action in sol :
             current = prblm.result(action= action ,state= current)
             path.append(current)
-        #print(path)
-        return path ,path_cost ,nodes_explored
+        print(self.get_instructions(sol))
+        print(path)
+        return path ,path_cost ,nodes_explored , 
 
     def create_problem_rooms(self , bl1: str, room1: str, bl2: str, room2: str, algorithm: str):
         init_state = (bl1, room1)
@@ -244,5 +246,21 @@ class generator :
         for action in sol :
             current = prblm.result(action= action ,state= current)
             path.append(current)
-        #print(path)
+        print(self.get_instructions(sol))
+        print(path)
         return path ,path_cost ,nodes_explored
+
+    def get_instructions(self,path) :
+        instructions = 'Instructions :'
+        idx = 0
+        while idx < len(path) :
+            idx2 = idx +1
+            while idx2 != len(path) and path[idx2] == path[idx] :
+                idx2+=1
+            instructions +=(f'{idx2 - idx}x {path[idx]} ,')
+            idx = idx2
+
+        return instructions
+                
+
+            

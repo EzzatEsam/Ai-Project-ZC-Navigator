@@ -148,8 +148,8 @@ class Rooms_Problem:
     
     def goal_test(self, state):
         y, x= state[0] , state[1]
-        return self.buildings_maps[self.bl2][y, x] == self.index2
-        #return state == self.target_state       
+        return self.buildings_maps[self.bl2][y, x] == self.index2  and not self.road_map[y,x]
+          
     
     def heuristic(self,state):
         dist = self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state) ; 
@@ -172,14 +172,18 @@ class Rooms_Problem:
     def sqrt_distance(self , s1 , s2) :
         return abs(sqrt((s1[0] - s2[0]) **2 + (s1[1] - s2[1]) **2)) 
     
+    def manhatten_dist(self,s1,s2) :
+        return abs(s1[0] - s2[0])  + abs(s1[1] - s2[1])
+
     def cosine_dist(self,s1,s2) :
         return (s1[0] * s2[0] +s1[0] * s2[0] ) /abs(sqrt((s1[0]**2 + s1[1]) *(s2[0]**2 + s2[1]) ) )
 
     # def is_valid_target(self) : return self.road_map[self.target_state[0], self.target_state[1]] != 0
 
-    def check_available(self, y, x):
+    def check_available(self, y, x , state):
+        c_y , c_x = state
         for i in self.buildings_maps.values():
-            if i[y, x] != 0: return True
+            if i[y, x] == 1 or ( i[y, x] and self.road_map[c_y,c_x] ==0 ): return True
         return False
 
 class generator :
@@ -187,8 +191,8 @@ class generator :
         self.zc_map  = zc_map;
         self.buildings_locs  = buildings_locs;
         
-    def create_problem(self, current: tuple[int, int], target: tuple[int, int], algorithm: str) : 
-        prblm = Problem(road_map= self.zc_map, target_state= target , init_state= current)
+    def create_problem(self, current: tuple[int, int], target: tuple[int, int], algorithm: str , h ) : 
+        prblm = Problem(road_map= self.zc_map, target_state= target , init_state= current , h_type= h)
         if not prblm.is_valid_target() : return None;
         print(f'Algorithm {algorithm}')
         res = None
@@ -222,9 +226,9 @@ class generator :
         print(path)
         return path ,path_cost ,nodes_explored , 
 
-    def create_problem_rooms(self , bl1: str, room1: str, bl2: str, room2: str, algorithm: str):
+    def create_problem_rooms(self , bl1: str, room1: str, bl2: str, room2: str, algorithm: str , h):
         init_state = (bl1, room1)
-        prblm = Rooms_Problem(road_map = self.zc_map, buildings_maps = self.buildings_locs, init_state = init_state, target_state = (bl2, room2), h_type = 'ecld')
+        prblm = Rooms_Problem(road_map = self.zc_map, buildings_maps = self.buildings_locs, init_state = init_state, target_state = (bl2, room2), h_type =h)
         #if not prblm.is_valid_target() : return None;
 
         print(f'Algorithm {algorithm}')

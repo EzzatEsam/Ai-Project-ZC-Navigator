@@ -1,6 +1,9 @@
 from collections import deque
 from heapq import heappop, heappush
 from itertools import count
+from random import choice, random
+from math import exp
+
 
 
 class Node:
@@ -164,16 +167,17 @@ def a_star_search(problem, verbose=False):
             if child.state not in explored:
                 heappush(frontier, (child.g+ child.h, next(counter), child))
 
+
+
 states_list = []
 
-def hill_climbing(problem, verbose = False):
+def hill_climbing(problem):
     ''' Hill climbing search implementation.'''
     current_state = problem.init_state
     current_value = problem.heuristic(current_state)
 
-    if verbose: visualizer = Visualizer(problem)
+    
     while True:
-        if verbose: visualizer.visualize([current_state])
         next_state, next_value = None, None
 
         for action in problem.actions(current_state):
@@ -194,24 +198,20 @@ def random_restart_hill_climbing(problem, verbose=False):
         solution_state = hill_climbing(problem, verbose)  # Try to solve the problem instance with hill climbing
         if problem.goal_test(solution_state):  return solution_state  # If succeeded, return the solution
 
-from random import choice, random
-from math import exp
-from itertools import count
 
-def simulated_annealing(problem, schedule, verbose=False):
+
+
+def simulated_annealing(problem, schedule):
     '''Simulated annealing search implementation.'''
     current_state = problem.init_state
     current_value = problem.heuristic(current_state)
 
-    if verbose: visualizer = Visualizer(problem)
+    
     for t in count():
-        
-        if verbose: visualizer.visualize([current_state])
         T = schedule(t)  # A function that determines the "temperature" (acceptability of a bad state) as a function of the step count
         
-        if current_value is 0 or T is 0: return current_state  # Return if a goal state is found or if the temperature hits 0
+        if current_value == 0 or T == 0: return current_state  # Return if a goal state is found or if the temperature hits 0
         next_states = [problem.result(current_state, action) for action in problem.actions(current_state)]  # Generate all possible next states
-        
         while True:  # Repeat the following till the current state is updated
             next_state = choice(next_states)  # Choose a random next state
             states_list.append(next_state)

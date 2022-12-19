@@ -224,6 +224,7 @@ def simulated_annealing(problem, schedule, verbose=False):
 
 
 def local_search_states(problem, type): 
+    states_list.clear()
     if type == 'hill_climbing': hill_climbing(problem)
     elif type == 'Simulated Annealing': simulated_annealing(problem, lambda t: exp(-t))
     return states_list

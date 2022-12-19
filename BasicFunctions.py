@@ -14,16 +14,12 @@ def Encoding(img_name: str, encoding_parameter: int) -> np.array:
     img = ImageOps.grayscale(img)
     img_list = np.asarray(img).copy()
 
-    # for i in range(len(img_list)):
-    #     for j in range(len(img_list[i])):
-    #         if img_list[i,j] != 0:
-    #             img_list[i,j] = encoding_parameter
-    img_list[img_list != 0] =    encoding_parameter        
+    img_list[img_list != 0] = encoding_parameter        
     return img_list.astype(int)
 
-def get_rooms(img_path) :
+def get_rooms(img_name: str) -> np.array:
     
-    img = cv2.imread(img_path)
+    img = cv2.imread(img_name)
     
     whites = (cv2.inRange(img, (250, 250, 250), (255, 255, 255)))
     reds = (cv2.inRange(img, (250, 0, 0), (255, 10, 10)))
@@ -38,19 +34,3 @@ def get_rooms(img_path) :
     res[greens.astype(bool)] = 3
     res[blues.astype(bool)] = 4
     return res
-    
-
-
-def adding_img_lists(*img_lists: list[list[int]]) -> list[list[int]]:
-
-    def adding_2d_lists(x, y):
-        for i in range(len(x)):
-            for j in range(len(x[i])):
-                x[i][j] += y[i][j]
-        return x
-
-    output = img_lists[0]
-    for i in range(1, len(img_lists)):
-        adding_2d_lists(output, img_lists[i])
-    
-    return output

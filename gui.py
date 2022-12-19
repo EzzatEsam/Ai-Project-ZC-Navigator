@@ -1,4 +1,4 @@
-import imp
+#import imp
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
@@ -68,7 +68,7 @@ class gui_handler :
         self.label3.place(x=LABEL3_POS[0] ,y=LABEL3_POS[1])
 
 
-        options = ['BFS' , 'DFS' , 'IDS' , 'A*' , 'Greedy']
+        options = ['BFS' , 'DFS' , 'IDS' , 'A*' , 'Greedy', 'hill_climbing', 'Simulated Annealing']
         alg_choice = StringVar(root)
         alg_choice.set('BFS')
         
@@ -145,12 +145,14 @@ class gui_handler :
     def get_path_rooms(self) :
         self.reset()
         tm = timer().start()
-        res =  self.gen.create_problem_rooms(  self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get())
+        res =  self.gen.create_problem_rooms(self.b1_choice.get() ,self.room1_choice.get() , self.b2_choice.get() ,self.room2_choice.get() , self.alg_choice.get())
         elabsed  =tm.get_elabsed()
-        if res :
-            self.current_path = res[0]
-            self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
-            self.label3.config(text =f'Total path Cost : {res[1]}') 
+        if res:
+            if type(res) == list: self.current_path = res
+            else:
+                self.current_path = res[0]
+                self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
+                self.label3.config(text =f'Total path Cost : {res[1]}') 
 
         else :
             messagebox.showinfo("Error happened", "Invalid input")
@@ -202,14 +204,22 @@ class gui_handler :
         self.target = None
         self.current_path = []
 
-    def get_path(self) :
+    def get_path(self):
         tm = timer().start()
         res = self.gen.create_problem(self.current ,self.target ,self.alg_choice.get())
         elabsed  =tm.get_elabsed()
-        if res :
-            self.current_path = res[0]
-            self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
-            self.label3.config(text =f'Total path Cost : {res[1]}') 
+
+        f = open("test.txt", "w")
+        f.write(str(res))
+        f.close()
+        print(res)
+        
+        if res:
+            if type(res) == list: self.current_path = res
+            else:
+                self.current_path = res[0]
+                self.label2.config(text =f'Path Retrieved , Nodes explored : {res[2]} \n Elabsed time {elabsed : .3e}') 
+                self.label3.config(text =f'Total path Cost : {res[1]}') 
 
         else :
             messagebox.showinfo("Error happened", "Invalid input")

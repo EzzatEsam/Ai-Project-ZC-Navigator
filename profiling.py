@@ -1,6 +1,5 @@
 import time
 
-
 class timer :
     def __init__(self) -> None:
         pass

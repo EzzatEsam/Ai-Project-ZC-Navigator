@@ -1,8 +1,7 @@
-#import imp
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
-from profiling import *     
+from profiling import timer
 from loader import *
 
 
@@ -31,7 +30,7 @@ ROOM2_POS = (1100, 460)
 
 BTN1_POS = (1021, 536)
 
-MAP_NAME = 'map.png'
+MAP_NAME = 'MapData/map.png'
 
 class gui_handler :
     current = None
@@ -208,7 +207,7 @@ class gui_handler :
                 lines.append([self.current_path[i] ,self.current_path[i+1]])
             for ln in lines :
                 self.drawed_lines.append(self.window.create_line(ln[0][1] , ln[0][0] , ln[1][1] , ln[1][0]  , fill="blue", width=5 )) 
-                #pygame.draw.line(self.screen, BLUE, ln[0],ln[1], 5)
+
 
             x = self.current_path[0][1]
             y = self.current_path[0][0]

@@ -2,7 +2,6 @@ from cmath import sqrt
 
 import numpy as np
 from loader import *
-from math import exp
 from typing import Dict
 
 from Solvers import *
@@ -11,7 +10,6 @@ class Problem:
     def __init__(self, road_map: np.array, init_state: tuple, target_state: tuple, h_type: str = 'ecld' ,bad_road_penalty = 0):
         self.init_state = init_state
         self.road_map = road_map
-        #self.targets_positions = targets_positions   
         self.target_state = target_state
         self.h_type = h_type
         self.bad_road_penalty = bad_road_penalty
@@ -62,7 +60,6 @@ class Problem:
         y, x= state[0] , state[1]
         yy, xx= self.target_state[0] , self.target_state[1]
         return yy == y and xx == x
-        #return state == self.target_state       
     
     def heuristic(self,state) :
         return self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state)
@@ -160,14 +157,6 @@ class Rooms_Problem:
     
     def heuristic(self,state):
         dist = self.sqrt_distance(self.target_state,state) if self.h_type == 'ECLD' else self.manhatten_dist(self.target_state , state) ; 
-        # if dist <= 10 :
-        #     res0 = np.where(self.buildings_rooms_inside_map[self.bl1] == self.index)[0]
-        #     res1 = np.where(self.buildings_rooms_inside_map[self.bl1] == self.index)[1]
-        #     if  self.h_type == 'ECLD' :
-        #         dist = min( [ self.sqrt_distance((y,x),state) for x , y in zip(res0 , res1)])
-        #     else :
-        #         dist = min( [ self.manhatten_dist((y,x),state) for x , y in zip(res0 , res1)])
-            
         return  dist
     
 
@@ -185,7 +174,6 @@ class Rooms_Problem:
     def cosine_dist(self,s1,s2) :
         return (s1[0] * s2[0] +s1[0] * s2[0] ) /abs(sqrt((s1[0]**2 + s1[1]) *(s2[0]**2 + s2[1]) ) )
 
-    # def is_valid_target(self) : return self.road_map[self.target_state[0], self.target_state[1]] != 0
 
     def check_available(self, y, x , state):
         c_y , c_x = state
@@ -257,7 +245,6 @@ class generator :
             res = local_search_states(prblm, 'hill_climbing')
             return res
         elif algorithm == 'Simulated Annealing':
-            #pass
             res = local_search_states(prblm, 'Simulated Annealing')
             return res
 

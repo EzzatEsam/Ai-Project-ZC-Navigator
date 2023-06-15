@@ -68,13 +68,11 @@ def bfs_graph(problem):
                 frontier.appendleft(child)
                 explored.add(child.state)
 
-def dfs(problem , verbose :bool =1) :    
+def dfs(problem ) :    
     if problem.goal_test(problem.init_state): return solution(Node.root(problem))
     frontier = deque([Node.root(problem)])
     explored = {problem.init_state}
-    #if verbose: visualizer = Visualizer(problem)
     while frontier:
-        #if verbose: visualizer.visualize(frontier)
         node = frontier.pop()
         for action in problem.actions(node.state):
             child = Node.child(problem, node, action)
@@ -84,38 +82,75 @@ def dfs(problem , verbose :bool =1) :
                 frontier.append(child)
                 explored.add(child.state)
             
+# def dls(problem , limit ) :
+#     if problem.goal_test(problem.init_state): return solution(Node.root(problem))
+#     frontier = deque([Node.root(problem)])
+#     explored = 0
+    
+#     #print(limit)
+#     while frontier:
+
+#         node = frontier.pop()
+        
+#         for action in problem.actions(node.state):
+#             explored += 1
+#             child = Node.child(problem, node, action)
+#             if child.get_child_index() < limit : 
+#                 if problem.goal_test(child.state):
+#                     return solution(child)  , explored
+#                 frontier.append(child)
+#     return None , explored 
+
 def dls(problem , limit ) :
     if problem.goal_test(problem.init_state): return solution(Node.root(problem))
     frontier = deque([Node.root(problem)])
-    explored = 0
+    explored = {problem.init_state }
     
-    #print(limit)
     while frontier:
-
         node = frontier.pop()
-        print(limit)
-        print(f'Index {node.get_child_index()}')
-        for action in problem.actions(node.state):
-            explored += 1
-            child = Node.child(problem, node, action)
-            if child.get_child_index() < limit : 
-                if problem.goal_test(child.state):
-                    return solution(child)  , explored
-                frontier.append(child)
-    return None , explored 
+        if node.get_child_index() < limit :
+            for action in problem.actions(node.state):
+                child = Node.child(problem, node, action)
+                if  child.state not in explored : 
+                    explored.add(child.state)
+                    if problem.goal_test(child.state):
+                        return solution(child)  , len(explored) 
+                    frontier.append(child)
+    return None , len(explored) 
 
-def ids(problem  ,start_limit = 0) :
+
+# def dls(problem ,limit , innit_node = None , explored = 0  ) :
+#     if not innit_node : innit_node = Node.root(problem)
+#     explored += 1
+#     if problem.goal_test(innit_node.state): return solution(innit_node) , explored
+#     #print(innit_node.state , limit)
+#     if  limit > 0 :
+#         actions = problem.actions(innit_node.state)
+#         for action in  actions:
+#             print(limit , action)
+#             #print( action, problem.actions(innit_node.state))
+#             #child = Node.child(problem, innit_node, action )
+#             child = Node.child(problem, innit_node, action )
+#             sol = dls(problem,limit =  limit -1 , innit_node = child  ,explored = explored )
+            
+#             if sol[0] : return sol 
+#             explored += sol[1]
+
+#     return None , explored
+
+def ids(problem  ,start_limit = 0 , end_limit = 100000) :
     limit = start_limit
     explored =0
-    while 1 :
+    while limit < end_limit :
         result = dls(problem,limit)
+        print(limit)
         if result[0] is not None :
             return result[0] , explored + result[1]
         explored += result[1]
         limit += 1
 
 
-def greedy_best_first(problem, verbose=False):
+def greedy_best_first(problem):
     '''Greedy best-first search implementation.'''
     counter = count()
     frontier = [(None, None, Node.root(problem))]
@@ -133,24 +168,9 @@ def greedy_best_first(problem, verbose=False):
             if child.state not in explored:
                 heappush(frontier, (child.h, next(counter), child))
 
-def uniform_cost_search(problem):
-    counter = count()
-    frontier = [(None, None, Node.root(problem))]
-    explored = set()
-    while frontier:
 
-        _, _, node = heappop(frontier)
-        if node.state in explored: continue
-        if problem.goal_test(node.state):
-            return solution(node) , len(explored) +1
 
-        explored.add(node.state)
-        for action in problem.actions(node.state):
-            child = Node.child(problem, node, action)
-            if child.state not in explored:
-                heappush(frontier, (child.g, next(counter), child))
-
-def a_star_search(problem, verbose=False):
+def a_star_search(problem):
     counter = count()
     frontier = [(None, None, Node.root(problem))]
     explored = set()

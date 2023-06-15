@@ -203,11 +203,9 @@ class generator :
         elif algorithm == 'Greedy':
             res = greedy_best_first(prblm)
         elif algorithm == 'hill_climbing':
-            #pass
             res = local_search_states(prblm, 'hill_climbing')
             return res
         elif algorithm == 'Simulated Annealing':
-            #pass
             res = local_search_states(prblm, 'Simulated Annealing')
             return res
         
@@ -241,7 +239,6 @@ class generator :
         elif algorithm == 'Greedy' :
             res = greedy_best_first(prblm)
         elif algorithm == 'hill_climbing':
-            #pass
             res = local_search_states(prblm, 'hill_climbing')
             return res
         elif algorithm == 'Simulated Annealing':
